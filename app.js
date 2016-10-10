@@ -34,8 +34,6 @@ window.onload = () => {
 
       const basicMaterial = new THREE.MeshBasicMaterial({color:"red"});
       
-      // Hmm, didn't see anything without this, when it defaulted to PhongMaterial,
-      // and not when I created it either. Maybe normals aren't computed or something?
       _.times(obj.children.length, (i) => obj.children[i].material = phongMaterial); 
 
       scene.add(obj);
