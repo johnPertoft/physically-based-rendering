@@ -12,3 +12,11 @@ function loadShaderSrc(url) {
     client.send();
   });
 }
+
+function loadGeometry() {
+  const loader = THREE.OBJLoader();
+}
+
+function loadTexture() {
+
+}

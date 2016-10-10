@@ -16,52 +16,49 @@ window.onload = () => {
       FAR);
 
   scene.add(camera);
-  camera.position.z = 300;
+  camera.position.z = 200;
   renderer.setSize(WIDTH, HEIGHT);
   document.body.appendChild(renderer.domElement);
- 
-  function drawSomething(vShaderSrc, fShaderSrc) {
-    // Temp, just drawiVng something
-    let radius = 50;
-    let segments = 64;
-    let rings = 64;
-    let sphereMaterial = new THREE.ShaderMaterial(
-        {
-          vertexShader: vShaderSrc,
-          fragmentShader: fShaderSrc
-        }
-    );
-    
-    let sphere = new THREE.Mesh(
-        new THREE.SphereGeometry(radius, segments, rings),
-        sphereMaterial);
-
-    scene.add(sphere);
-
-    let pointLight = new THREE.PointLight(0xFFFFFF);
-    pointLight.position.x = 10;
-    pointLight.position.y = 50;
-    pointLight.position.z = 130;
-
-    scene.add(pointLight);
-    
-    const renderLoop = (t) => {
-      scale = 0.5 + Math.abs(Math.sin(t / 1000));
-      sphere.scale.x = 1 * scale;
-      sphere.scale.y = 1 * scale;
-      sphere.scale.z = 1 * scale;
+  
+  // Just drawing the geometry of the dagger
+  function drawDagger(vertexShaderSrc, fragmentShaderSrc) {
+    const loader = new THREE.OBJLoader();
+    loader.load("models/dagger/Dagger.obj", (obj) => {
       
-      renderer.render(scene, camera);
+      const constantColorMaterial = new THREE.ShaderMaterial({
+        vertexShader: vertexShaderSrc,
+        fragmentShader: fragmentShaderSrc
+      });
+
+      const phongMaterial = new THREE.MeshPhongMaterial({color:"green"});
+
+      const basicMaterial = new THREE.MeshBasicMaterial({color:"red"});
+      
+      // Hmm, didn't see anything without this, when it defaulted to PhongMaterial,
+      // and not when I created it either. Maybe normals aren't computed or something?
+      _.times(obj.children.length, (i) => obj.children[i].material = phongMaterial); 
+
+      scene.add(obj);
+       
+      // For Phong lighting
+      const light = new THREE.DirectionalLight(0xffffff, 0.55);
+      light.position.set(10, 0, 50);
+      scene.add(light);
+
+      const renderLoop = (t) => {
+        renderer.render(scene, camera);
+        requestAnimationFrame(renderLoop);
+      };
+
       requestAnimationFrame(renderLoop);
-    };
-
-    requestAnimationFrame(renderLoop);
+    });
   }
-
+ 
   Promise.all([
       loadShaderSrc("/shaders/simple.vert"), 
       loadShaderSrc("/shaders/simple.frag")])
     .then((shaders) => {
-      drawSomething(shaders[0], shaders[1]);
+      //drawSomething(shaders[0], shaders[1]);
+      drawDagger(shaders[0], shaders[1]);
     });
 }
