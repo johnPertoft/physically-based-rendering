@@ -13,10 +13,22 @@ function loadShaderSrc(url) {
   });
 }
 
-function loadGeometry() {
-  const loader = THREE.OBJLoader();
+function loadGeometry(url) {
+  const loader = new THREE.OBJLoader();
+  return new Promise((resolve, reject) => {
+    loader.load(url, (obj) => {
+      if (obj) 
+        resolve(obj);
+      else
+        reject(new Error("Error loading object"));
+    });
+  });
 }
 
-function loadTexture() {
-
+function loadTexture(url) {
+  const loader = new THREE.TGALoader();
+  return new Promise((resolve, reject) => {
+    // TODO: why doesnt this loader have a callback?
+    resolve(loader.load(url));
+  });
 }

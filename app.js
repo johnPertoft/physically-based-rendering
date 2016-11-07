@@ -20,43 +20,76 @@ window.onload = () => {
   renderer.setSize(WIDTH, HEIGHT);
   document.body.appendChild(renderer.domElement);
   
-  // Just drawing the geometry of the dagger
-  function drawDagger(vertexShaderSrc, fragmentShaderSrc) {
-    const loader = new THREE.OBJLoader();
-    loader.load("models/dagger/Dagger.obj", (obj) => {
-      
-      const constantColorMaterial = new THREE.ShaderMaterial({
-        vertexShader: vertexShaderSrc,
-        fragmentShader: fragmentShaderSrc
-      });
-
-      const phongMaterial = new THREE.MeshPhongMaterial({color:"green"});
-
-      const basicMaterial = new THREE.MeshBasicMaterial({color:"red"});
-      
-      _.times(obj.children.length, (i) => obj.children[i].material = phongMaterial); 
-
-      scene.add(obj);
-       
-      // For Phong lighting
-      const light = new THREE.DirectionalLight(0xffffff, 0.55);
-      light.position.set(10, 0, 50);
-      scene.add(light);
-
-      const renderLoop = (t) => {
-        renderer.render(scene, camera);
-        requestAnimationFrame(renderLoop);
-      };
-
-      requestAnimationFrame(renderLoop);
+  function drawObject(vertexShaderSrc, 
+                      fragmentShaderSrc,
+                      geometry,
+                      albedoTexture,
+                      glossTexture,
+                      specularTexture) {
+    
+    const pbrMaterial = new THREE.ShaderMaterial({
+      uniforms: {
+        albedoTexture: {type: "t", value: albedoTexture},
+        glossTexture: {type: "t", value: glossTexture},
+        specularTexture: {type: "t", value: specularTexture}
+      },
+      vertexShader: vertexShaderSrc,
+      fragmentShader: fragmentShaderSrc
     });
+    
+    /*
+    const phongMaterial = new THREE.MeshPhongMaterial(
+        {map: albedoTexture});
+    */
+
+    // TODO: should there be different materials for the different
+    // parts of the dagger?
+    _.times(geometry.children.length, (i) => 
+        geometry.children[i].material = pbrMaterial); 
+
+    scene.add(geometry);
+    
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.85);
+    directionalLight.position.set(10, 0, 50);
+    scene.add(ambientLight);
+    scene.add(directionalLight);
+
+    const renderLoop = (t) => {
+      renderer.render(scene, camera);
+      requestAnimationFrame(renderLoop);
+    };
+
+    requestAnimationFrame(renderLoop);
   }
  
   Promise.all([
       loadShaderSrc("/shaders/simple.vert"), 
-      loadShaderSrc("/shaders/simple.frag")])
-    .then((shaders) => {
-      //drawSomething(shaders[0], shaders[1]);
-      drawDagger(shaders[0], shaders[1]);
+      loadShaderSrc("/shaders/simple.frag"),
+      loadGeometry("/models/dagger/Dagger.obj"),
+      loadTexture("/models/dagger/Dagger_Albedo.tga"),
+      loadTexture("/models/dagger/Dagger_Gloss.tga"),
+      loadTexture("/models/dagger/Dagger_Specular.tga")])
+    .then((results) => {
+      const [vertex_shader_src, 
+             fragment_shader_src,
+             geometry,
+             albedoTexture,
+             glossTexture,
+             specularTexture] = results;
+
+      drawObject(vertex_shader_src, 
+                 fragment_shader_src,
+                 geometry,
+                 albedoTexture,
+                 glossTexture,
+                 specularTexture);
     });
+
+  // TODO: 
+  // stats box from THREEjs, 
+  // movement controls, 
+  // lighting controls
+  // Background skybox (?) to better show the effects of pbr
 }
