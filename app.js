@@ -22,7 +22,7 @@ window.onload = () => {
   
   // Camera movement controls
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableZoom = false;
+  controls.enableZoom = true; //false;
   // TODO: add re rendering here I guess?
   //controls.addEventListener("change", () => console.log("hej"));
       
@@ -75,13 +75,6 @@ window.onload = () => {
     _.times(objGeometry.children.length, (i) => 
         objGeometry.children[i].material = pbrMaterial); 
    
-    // Temp, to show simple reflection with the environment map
-    // not using our pbr shader for this atm
-    objGeometry.children[0].material = pbrMaterial;
-    objGeometry.children[1].material = pbrMaterial;
-    objGeometry.children[2].material = reflectionMaterial;
-    objGeometry.children[3].material = pbrMaterial;
-    
     scene.add(objGeometry);
 
     const renderLoop = (t) => {
