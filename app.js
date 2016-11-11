@@ -19,7 +19,7 @@ window.onload = () => {
   camera.position.z = 400;
   renderer.setSize(WIDTH, HEIGHT);
   document.body.appendChild(renderer.domElement);
-
+  
   // Camera movement controls
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableZoom = false;
@@ -42,10 +42,22 @@ window.onload = () => {
         new THREE.MeshBasicMaterial({map: cubemapTexture}));
     cubemapMesh.scale.x = -1;
     scene.add(cubemapMesh);
+ 
+    // TODO: should probably just load a texture cube instead of creating
+    // it on the fly since its not changing anyway
+    // Get an environment map to use for reflections
+    const environmentCamera = new THREE.CubeCamera(1, 10000, 256);
+    scene.add(environmentCamera);
+    environmentCamera.updateCubeMap(renderer, scene);
+
+    // TODO: pass envMap to pbr shader
 
     // Custom material using the basic PBR shader
     const pbrMaterial = new THREE.ShaderMaterial({
       uniforms: {
+        envCubeTexture: {
+          type: "t", 
+          value: environmentCamera.renderTarget.texture},
         albedoTexture: {type: "t", value: albedoTexture},
         glossTexture: {type: "t", value: glossTexture},
         specularTexture: {type: "t", value: specularTexture}
@@ -53,11 +65,22 @@ window.onload = () => {
       vertexShader: vertexShaderSrc,
       fragmentShader: fragmentShaderSrc
     });
-    
+      
+    const reflectionMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      envMap: environmentCamera.renderTarget.texture});
+
     // Set scale and materials of object
     objGeometry.scale.set(2, 2, 2);
     _.times(objGeometry.children.length, (i) => 
         objGeometry.children[i].material = pbrMaterial); 
+   
+    // Temp, to show simple reflection with the environment map
+    // not using our pbr shader for this atm
+    objGeometry.children[0].material = pbrMaterial;
+    objGeometry.children[1].material = pbrMaterial;
+    objGeometry.children[2].material = reflectionMaterial;
+    objGeometry.children[3].material = pbrMaterial;
     
     scene.add(objGeometry);
 
@@ -71,8 +94,8 @@ window.onload = () => {
   }
   
   Promise.all([
-      loadShaderSrc("/shaders/simple.vert"), 
-      loadShaderSrc("/shaders/simple.frag"),
+      loadShaderSrc("/shaders/pbr.vert"), 
+      loadShaderSrc("/shaders/pbr.frag"),
       loadGeometry("/resources/dagger/Dagger.obj"),
       loadTexture("/resources/dagger/Dagger_Albedo.tga"),
       loadTexture("/resources/dagger/Dagger_Gloss.tga"),

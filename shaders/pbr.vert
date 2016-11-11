@@ -1,7 +1,8 @@
+varying vec3 vNormal;
 varying vec2 vUv;
 
 void main() {
-  // Just pass texture coordinate to fragment shader
+  vNormal = normal;
   vUv = uv;
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);

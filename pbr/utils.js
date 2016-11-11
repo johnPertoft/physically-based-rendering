@@ -29,7 +29,7 @@ function loadTexture(url) {
   if (url.toLowerCase().endsWith("jpg")) {
     const loader = new THREE.TextureLoader();
     return new Promise((resolve, reject) => {
-      loader.load("/resources/cubemap.jpg", (t) => {
+      loader.load(url, (t) => {
         resolve(t);
       });
     });
