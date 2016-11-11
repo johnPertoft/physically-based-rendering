@@ -26,9 +26,19 @@ function loadGeometry(url) {
 }
 
 function loadTexture(url) {
-  const loader = new THREE.TGALoader();
-  return new Promise((resolve, reject) => {
-    // TODO: why doesnt this loader have a callback?
-    resolve(loader.load(url));
-  });
+  if (url.toLowerCase().endsWith("jpg")) {
+    const loader = new THREE.TextureLoader();
+    return new Promise((resolve, reject) => {
+      loader.load("/resources/cubemap.jpg", (t) => {
+        resolve(t);
+      });
+    });
+  
+  } else if (url.toLowerCase().endsWith("tga")) {
+    const loader = new THREE.TGALoader();
+    return new Promise((resolve, reject) => {
+      // TODO: why doesnt this loader have a callback?
+      resolve(loader.load(url));
+    });
+  }
 }
