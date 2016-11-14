@@ -23,8 +23,6 @@ window.onload = () => {
   // Camera movement controls
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableZoom = true; //false;
-  // TODO: add re rendering here I guess?
-  //controls.addEventListener("change", () => console.log("hej"));
       
   function drawObject(
       vertexShaderSrc, 
@@ -44,13 +42,13 @@ window.onload = () => {
     scene.add(cubemapMesh);
  
     // TODO: should probably just load a texture cube instead of creating
-    // it on the fly since its not changing anyway
+    // it on the fly since its not changing anyway but in this way we can 
+    // have another object in the scene to be visible in reflection which
+    // is nice for the demo I guess.
     // Get an environment map to use for reflections
     const environmentCamera = new THREE.CubeCamera(1, 10000, 256);
     scene.add(environmentCamera);
     environmentCamera.updateCubeMap(renderer, scene);
-
-    // TODO: pass envMap to pbr shader
 
     // Custom material using the basic PBR shader
     const pbrMaterial = new THREE.ShaderMaterial({
@@ -65,10 +63,12 @@ window.onload = () => {
       vertexShader: vertexShaderSrc,
       fragmentShader: fragmentShaderSrc
     });
-      
-    const reflectionMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
+    
+    /*
+    // This apparently uses envMap as IBL and shades it much darker
+    const tempMaterial = new THREE.MeshStandardMaterial({
       envMap: environmentCamera.renderTarget.texture});
+    */
 
     // Set scale and materials of object
     objGeometry.scale.set(2, 2, 2);
@@ -85,7 +85,10 @@ window.onload = () => {
     // Start the rendering loop
     requestAnimationFrame(renderLoop);
   }
-  
+ 
+  // Note: the gloss texture for the dagger encodes gloss (what is gloss really?), ao (ambient occlusion?), and cavity (??) in its 3 channels
+  // TODO: should we use the normal texture for the dagger? or just use the computed ones?
+
   Promise.all([
       loadShaderSrc("/shaders/pbr.vert"), 
       loadShaderSrc("/shaders/pbr.frag"),
@@ -99,12 +102,13 @@ window.onload = () => {
     });
 
   // TODO:
+  // maybe use other model, we dont have a metalness texture with this one for example
+  // Other terminology, specular -> metalness for instance?
   // stats box from THREEjs
+  // write about image based lighting, which I guess is kind of what we are doing with the environment map?
+  // should probably have some direct lights as well
   // run everything fullscreen, (update projectionmatrix etc.. on size change)
-  // movement controls, 
+  // path tracing for better reflections?
   // lighting controls
-  // Background skybox (?) to better show the effects of pbr, cubemap is what we need I think? Is it enough to have that as lighting approximation? What is path tracing otherwise, do we need it? How do we get all these cool reflections etc
-  // http://www.humus.name/index.php?page=Textures
-  // https://www.flickr.com/photos/jonragnarsson/2294472375/
   // controls for switching shading techniques
 }
