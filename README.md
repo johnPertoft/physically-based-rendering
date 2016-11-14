@@ -1,5 +1,5 @@
 # How to run locally
-Only tested on google chrome, but it, at least, complains about cross origin requests when getting the shaders via XMLHttpRequest over the file:// protocol. Just start a simple web server to serve index.html to get around it. E.g.
+Only tested on google chrome, but it, at least, complains about cross origin requests when getting the shaders via XMLHttpRequest over the file:// protocol. Just start a simple web server to serve index.html to get around it. If you have Python installed you can use the supplied run script like this.
 ```bash
 $ sh python_server.sh
 ```
