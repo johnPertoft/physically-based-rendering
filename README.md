@@ -1,7 +1,7 @@
 # How to run locally
 Only tested on google chrome, but it, at least, complains about cross origin requests when getting the shaders via XMLHttpRequest over the file:// protocol. Just start a simple web server to serve index.html to get around it. E.g.
 ```bash
-$ python2 -m SimpleHTTPServer
+$ sh python_server.sh
 ```
 
 # Physical Based Rendering
