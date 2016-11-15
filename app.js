@@ -31,6 +31,7 @@ window.onload = () => {
       albedoTexture,
       glossTexture,
       specularTexture,
+      normalTexture,
       cubemapTexture) {
    
     // Cubemap for ambient lighting in scene
@@ -58,7 +59,8 @@ window.onload = () => {
           value: environmentCamera.renderTarget.texture},
         albedoTexture: {type: "t", value: albedoTexture},
         glossTexture: {type: "t", value: glossTexture},
-        specularTexture: {type: "t", value: specularTexture}
+        specularTexture: {type: "t", value: specularTexture},
+        normalTexture: {type: "t", value: normalTexture}
       },
       vertexShader: vertexShaderSrc,
       fragmentShader: fragmentShaderSrc
@@ -69,7 +71,7 @@ window.onload = () => {
     const tempMaterial = new THREE.MeshStandardMaterial({
       envMap: environmentCamera.renderTarget.texture});
     */
-
+    
     // Set scale and materials of object
     objGeometry.scale.set(2, 2, 2);
     _.times(objGeometry.children.length, (i) => 
@@ -96,6 +98,7 @@ window.onload = () => {
       loadTexture("/resources/dagger/Dagger_Albedo.tga"),
       loadTexture("/resources/dagger/Dagger_Gloss.tga"),
       loadTexture("/resources/dagger/Dagger_Specular.tga"),
+      loadTexture("/resources/dagger/Dagger_Normals.tga"),
       loadTexture("/resources/cubemap.jpg")])
     .then((results) => {
       drawObject(...results);
