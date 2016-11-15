@@ -27,5 +27,8 @@ void main() {
   vec3 envCoord = reflect(cameraToVertex, vNormal);
   
   //gl_FragColor = albedo + textureCube(envCubeTexture, envCoord);
-  gl_FragColor = vec4(normal, 1.0);
+  gl_FragColor = 
+      0.33 * albedo + 
+      0.33 * textureCube(envCubeTexture, vNormal) + 
+      0.33 * textureCube(envCubeTexture, envCoord);
 }
