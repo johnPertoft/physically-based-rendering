@@ -19,13 +19,13 @@ window.onload = () => {
   camera.position.z = 400;
   renderer.setSize(WIDTH, HEIGHT);
   document.body.appendChild(renderer.domElement);
-  
+
   // Camera movement controls
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableZoom = true; //false;
-  
+
   Promise.all([
-      loadShaderSrc("/shaders/pbr.vert"), 
+      loadShaderSrc("/shaders/pbr.vert"),
       loadShaderSrc("/shaders/pbr.frag"),
       loadGeometry("/resources/dagger/Dagger.obj"),
       loadTexture("/resources/dagger/Dagger_Albedo.tga"),
@@ -34,18 +34,22 @@ window.onload = () => {
       loadTexture("/resources/dagger/Dagger_Normals.tga"),
       loadTexture("/resources/cubemap.jpg")])
     .then(resources => {
-			const envMap = resources[7]; 
-			return Promise.all([
-					...resources, 
-					computeDiffuseIrradianceMap(renderer.context, envMap)]);
-		})
-		.then(resources => {
+      const envMap = resources[7];
+      return Promise.all([
+        ...resources,
+        computeDiffuseIrradianceMap(renderer.context, envMap)]);
+    })
+    .then((resources) => {
+
+      // TODO: generate the irradiance map
+      const irradianceMapTexture = null;
+
+
       const pbrScene = new PBRScene(
           scene,
           renderer,
           camera,
           ...resources);
-			
       const renderLoop = (t) => {
         pbrScene.render();
         requestAnimationFrame(renderLoop);

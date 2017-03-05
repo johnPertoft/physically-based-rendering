@@ -3,9 +3,9 @@ function loadShaderSrc(url) {
     let client = new XMLHttpRequest();
     client.open("GET", url);
     client.onload = () => {
-      if (client.status == 200) 
+      if (client.status == 200)
         resolve(client.response);
-      else 
+      else
         reject(new Error("Error loading shader"));
     };
 
@@ -17,7 +17,7 @@ function loadGeometry(url) {
   const loader = new THREE.OBJLoader();
   return new Promise((resolve, reject) => {
     loader.load(url, (obj) => {
-      if (obj) 
+      if (obj)
         resolve(obj);
       else
         reject(new Error("Error loading object"));
@@ -33,7 +33,7 @@ function loadTexture(url) {
         resolve(t);
       });
     });
-  
+
   } else if (url.toLowerCase().endsWith("tga")) {
     const loader = new THREE.TGALoader();
     return new Promise((resolve, reject) => {
