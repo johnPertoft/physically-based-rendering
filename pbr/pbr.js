@@ -1,9 +1,5 @@
 class PBRScene {
 
-  static computeIrradianceMap() {
-  
-  }
-
   constructor(
       scene,
       renderer,

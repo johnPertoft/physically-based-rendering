@@ -33,18 +33,19 @@ window.onload = () => {
       loadTexture("/resources/dagger/Dagger_Specular.tga"),
       loadTexture("/resources/dagger/Dagger_Normals.tga"),
       loadTexture("/resources/cubemap.jpg")])
-    .then((resources) => {
-      
-      // TODO: generate the irradiance map
-      const irradianceMapTexture = null;
-
+    .then(resources => {
+			const envMap = resources[7]; 
+			return Promise.all([
+					...resources, 
+					computeDiffuseIrradianceMap(renderer.context, envMap)]);
+		})
+		.then(resources => {
       const pbrScene = new PBRScene(
           scene,
           renderer,
           camera,
-          ...resources, 
-          irradianceMapTexture);
-      
+          ...resources);
+			
       const renderLoop = (t) => {
         pbrScene.render();
         requestAnimationFrame(renderLoop);
@@ -52,7 +53,8 @@ window.onload = () => {
 
       // Start the rendering loop
       requestAnimationFrame(renderLoop);
-    });
+		});
+
 
   // TODO:
   // maybe use other model, we dont have a metalness texture with this one for example
