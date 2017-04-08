@@ -37,5 +37,17 @@ The sum of the fraction specular light and fraction of diffuse light must equal 
 Two basic types of materials in PBR are metals and non-metals (dielectric). Refracted light in metal surfaces is completely absorbed and thus does not contribute to the diffuse color (metals show no diffuse color). Non-metals have the diffuse color as described above.
 
 ## Reflectance Equation
-$\int x dx$
+$L_o(p, \omega_o) = \int_\Omega f_r(p, \omega_i, \omega_o) L_i(p, \omega_i) n \omega_i d\omega_i$
 
+L is **radiance** which is a quantification of the magnitude of light from a single direction or the total observed energy over an area scaled by incident angle. It's equation includes the following things
+
+* **Radiant flux** $\Phi$ is the transmitted energy of a light source. This incorporates the emitted energy at all its wavelengths.
+
+* **Solid angle** $\omega$ TODO
+
+* **Radiant intensity** is the amount of radiant flux per solid angle which is the strength of a light source over an area defined by the solid angle
+
+**Irradiance** is all the incoming light on a point which is the sum of all radiance which is what the fragment shader needs to set the right color.
+
+### Bidirectional reflective distribution function (BRDF)
+The BRDF takes an incoming light direction $\omega_i$, outgoing view direction $\omega_o$, surface normal and roughness parameter and returns the total reflected light
