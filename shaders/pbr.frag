@@ -69,12 +69,11 @@ void main() {
   F0 = mix(F0, albedo, metallic);
 
   // TEMP static light source
-  vec3 lightPosition = vec3(0.0, 1.5, 0.0);
-  vec3 lightColor = vec3(0.8, 0.0, 0.6);
+  vec3 lightPosition = vec3(0.0, 3.0, 0.0);
+  vec3 lightColor = vec3(10.0, 0.0, 0.0);
 
   // Reflectance equation
   vec3 Lo = vec3(0.0);
-  ///*
   vec3 N = normalize(vNormal);
   vec3 L = normalize(vWorldPos - lightPosition);
   vec3 V = -cameraToVertex;
@@ -99,30 +98,22 @@ void main() {
 
   float NdotL = max(dot(N, L), 0.0);
   Lo += (kD * albedo / PI + brdf) * radiance * NdotL;
-  //*/
-
-  ////////////////////////
   
-  // TODO: use IBL here
+	// TODO: use IBL here
   vec3 ambient = vec3(0.03) * albedo * ambient_occlusion; 
 
   vec3 color = ambient + Lo;
 
-  // TODO: how to tie in reflection?
   
   // HDR tonemapping + gamma correction
   color = color / (color + vec3(1.0));
   color = pow(color, vec3(1.0 / 2.2));
 
+  // TODO: how to tie in reflection correctly?
   // reflection
   color += 0.05 * textureCube(envCubeTexture, envCoord).rgb;
+  //color += (1.0 - roughness) * textureCube(envCubeTexture, envCoord).rgb;
+  //color = vec3(gloss)
 
   gl_FragColor = vec4(color, 1.0);
-
-  /*
-  gl_FragColor = 
-      0.33 * albedo + 
-      0.33 * textureCube(envCubeTexture, vNormal) + 
-      0.33 * textureCube(envCubeTexture, envCoord);
-  */
 }
